@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        let listOfName = ['Alex', 'Bill', 'Cook', 'Darren'];
+
+        listOfName[4] = 'Ellen';
+        console.log(listOfName);
+
+        listOfName.push('Fox', 'Gina')
+        console.log(listOfName);
+
+
+
+        listOfName[0] = 'Allen';
+        listOfName[2] = 'Carl';
+        console.log(listOfName);
+
+        listOfName.pop();
+        console.log(listOfName);
+
+        let name = listOfName.pop();
+        console.log(listOfName);
+
+        listOfName.shift();
+        console.lo(listOfName);
+
+        name = listOfName.shift();
+        console.log(name);
+        console.log(listOfName);
+
+        name = listOfName.pop();
+        console.log(name);
+        listOfName.unshift(name);
+        console.log(listOfName);
+
+        listOfName.splice(0, 0, "Alex");
+        console.log(listOfName);
+
+        let arrrRemoveValue = listOfName.splice(1, 2, "Bill", "Cook");
+        console.log(arrrRemoveValue);
+        console.log(listOfName);
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>
