@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        // console.log(Math.random());
+        // console.log(Math.random());
+        // console.log(Math.random());
+        // console.log(Math.random()); //.random()會回傳0~1之間的隨機值,會有小數點
+
+        let arrMeal = ['麥當勞', '肯德基', '摩斯漢堡', '頂呱呱', '漢堡王'];
+        let idxRandom = Math.floor(Math.random() * arrMeal.length) //.floor 無條件捨去小數值
+        console.log(idxRandom);
+
+        document.write('我可以選的餐廳<br />');
+
+        for (let i = 0; i < arrMeal.length; i++) {
+            document.write(' 。' + arrMeal[i] + '<br />') //<br \> 換行
+        }
+
+        document.write(`今天中餐,我選擇${arrMeal[idxRandom]}`)
+
+
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>
