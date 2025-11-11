@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>超複雜練習網頁</title>
+  <style>
+    :root {
+      --bg: #f4f4f5;
+      --bg-elevated: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.12);
+      --border: #e5e7eb;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.08);
+      --radius-xl: 18px;
+    }
+
+    /* 深色模式切換 */
+    .dark {
+      --bg: #020617;
+      --bg-elevated: #020617;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #60a5fa;
+      --accent-soft: rgba(96, 165, 250, 0.15);
+      --border: #1f2937;
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #1d4ed8 0, transparent 55%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 4rem;
+    }
+
+    .app-shell {
+      max-width: 1120px;
+      margin: 1.5rem auto 0;
+      padding: 1.5rem;
+      border-radius: 24px;
+      background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.12),
+          rgba(255, 255, 255, 0.03)
+        );
+      backdrop-filter: blur(24px);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: conic-gradient(
+        from 220deg,
+        #3b82f6,
+        #ec4899,
+        #f97316,
+        #22c55e,
+        #3b82f6
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f9fafb;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.6);
+    }
+
+    .brand-text h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .brand-text p {
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    button,
+    .btn {
+      border: none;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .btn {
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.02);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      transition: all 0.18s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      border-color: transparent;
+      color: #f9fafb;
+      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.5);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.16);
+      border-color: rgba(148, 163, 184, 0.6);
+    }
+
+    .btn.primary:hover {
+      transform: translateY(-1px) scale(1.01);
+      box-shadow: 0 18px 40px rgba(37, 99, 235, 0.7);
+    }
+
+    nav {
+      display: flex;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+      padding: 0.3rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.04);
+    }
+
+    nav a {
+      flex: 1 0 auto;
+      text-align: center;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      text-decoration: none;
+      color: var(--muted);
+      transition: all 0.16s ease;
+      white-space: nowrap;
+    }
+
+    nav a.active,
+    nav a:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 2.2fr 1.6fr;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.04);
+      border-radius: var(--radius-xl);
+      padding: 1rem 1.1rem;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      backdrop-filter: blur(16px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .card-subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* 儀表板區 */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .stat-pill {
+      padding: 0.65rem 0.7rem;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .stat-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .clock {
+      font-variant-numeric: tabular-nums;
+      font-size: 1.1rem;
+    }
+
+    .quote {
+      font-size: 0.9rem;
+      color: var(--muted);
+      padding: 0.75rem 0.8rem;
+      border-radius: 0.9rem;
+      background: rgba(15, 23, 42, 0.05);
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+      margin-top: 0.5rem;
+    }
+
+    /* 待辦清單 */
+    #todoForm {
+      display: flex;
+      gap: 0.55rem;
+      margin-bottom: 0.65rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="number"] {
+      width: 100%;
+      padding: 0.5rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.03);
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease,
+        background 0.16s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="number"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
+      background: rgba(15, 23, 42, 0.06);
+    }
+
+    .btn.icon {
+      padding-inline: 0.65rem;
+      font-size: 1rem;
+    }
+
+    .todo-filters {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      font-size: 0.8rem;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .chip.active,
+    .chip:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    #todoList {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      max-height: 260px;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.6rem;
+      border-radius: 0.8rem;
+      background: rgba(15, 23, 42, 0.06);
+    }
+
+    .todo-item span {
+      flex: 1;
+      font-size: 0.9rem;
+    }
+
+    .todo-item.done span {
+      text-decoration: line-through;
+      color: var(--muted);
+      opacity: 0.8;
+    }
+
+    .todo-item button {
+      border-radius: 999px;
+      border: none;
+      padding: 0.25rem 0.55rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      background: rgba(15, 23, 42, 0.05);
+      color: var(--muted);
+      transition: all 0.16s ease;
+    }
+
+    .todo-item button:hover {
+      background: rgba(148, 163, 184, 0.3);
+      color: #111827;
+    }
+
+    .todo-item button.delete {
+      color: var(--danger);
+    }
+
+    /* 番茄鐘 */
+    .timer-display {
+      font-variant-numeric: tabular-nums;
+      font-size: 2.1rem;
+      font-weight: 700;
+      text-align: center;
+      margin: 0.5rem 0 0.75rem;
+    }
+
+    .timer-controls {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .timer-controls .btn {
+      font-size: 0.85rem;
+      padding-inline: 0.9rem;
+    }
+
+    .timer-status {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+    }
+
+    /* Gallery */
+    .gallery-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .gallery-item {
+      border-radius: 0.9rem;
+      overflow: hidden;
+      background: rgba(15, 23, 42, 0.06);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .gallery-thumb {
+      aspect-ratio: 4 / 3;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .gallery-body {
+      padding: 0.45rem 0.6rem 0.55rem;
+    }
+
+    .gallery-title {
+      font-size: 0.82rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .gallery-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.1rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: rgba(148, 163, 184, 0.2);
+      color: var(--muted);
+    }
+
+    /* 設定 */
+    #settingsForm {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    label {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .helper {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .error {
+      font-size: 0.78rem;
+      color: var(--danger);
+    }
+
+    .success-msg {
+      font-size: 0.8rem;
+      color: var(--success);
+      margin-top: 0.3rem;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .modal-backdrop.visible {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-elevated);
+      border-radius: 20px;
+      padding: 1.2rem 1.4rem;
+      width: min(420px, 90vw);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border);
+      animation: pop 0.18s ease-out;
+    }
+
+    @keyframes pop {
+      from {
+        transform: scale(0.96) translateY(6px);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal header {
+      margin-bottom: 0.7rem;
+    }
+
+    .modal header h2 {
+      font-size: 1.1rem;
+    }
+
+    .modal header button {
+      border-radius: 999px;
+      padding: 0.25rem 0.6rem;
+      background: rgba(15, 23, 42, 0.06);
+      color: var(--muted);
+    }
+
+    .modal-content {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .modal-footer {
+      margin-top: 0.9rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .pill-badge {
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--muted);
+      display: inline-flex;
+      gap: 0.3rem;
+      align-items: center;
+    }
+
+    /* scroll bar 微調整 */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.7);
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header>
+      <div class="brand">
+        <div class="brand-logo">LAB</div>
+        <div class="brand-text">
+          <h1>Front-End Playground</h1>
+          <p>一個練習 DOM、事件、localStorage、樣式的小實驗室</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="themeToggle" class="btn">🌙 深色模式</button>
+        <button id="aboutBtn" class="btn primary">❔ 關於這個頁面</button>
+      </div>
+    </header>
+
+    <nav>
+      <a href="#dashboard" class="active">Dashboard</a>
+      <a href="#todoSection">待辦清單</a>
+      <a href="#timerSection">番茄鐘</a>
+      <a href="#gallerySection">Gallery</a>
+      <a href="#settingsSection">設定</a>
+    </nav>
+
+    <main>
+      <!-- 左半部 -->
+      <div class="column">
+        <!-- Dashboard -->
+        <section id="dashboard" class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">今天的狀態</div>
+              <div class="card-subtitle">用一個小小儀表板追蹤你的一天</div>
+            </div>
+            <span class="pill-badge">
+              <span id="dayOfWeek">週？</span>
+              <span id="dateStr"></span>
+            </span>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-pill">
+              <div class="stat-label">現在時間</div>
+              <div class="stat-value clock" id="clock">--:--:--</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-label">完成的待辦</div>
+              <div class="stat-value" id="completedCount">0</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-label">番茄次數</div>
+              <div class="stat-value" id="pomodoroCount">0</div>
+            </div>
+          </div>
+
+          <div class="quote" id="quote">
+            「寫程式就是不停 debug，直到 bug 變成 feature。」
+          </div>
+        </section>
+
+        <!-- 待辦清單 -->
+        <section id="todoSection" class="card">
+          <div class="card-header">
+            <div class="card-title">待辦清單</div>
+            <div class="card-subtitle">使用 localStorage 保存你的任務</div>
+          </div>
+
+          <form id="todoForm">
+            <input
+              type="text"
+              id="todoInput"
+              placeholder="今天要完成什麼？例如：練 30 分鐘 JavaScript"
+            />
+            <button class="btn icon primary" type="submit">＋</button>
+          </form>
+
+          <div class="todo-filters">
+            <button class="chip active" data-filter="all">全部</button>
+            <button class="chip" data-filter="active">未完成</button>
+            <button class="chip" data-filter="done">已完成</button>
+          </div>
+
+          <ul id="todoList"></ul>
+        </section>
+      </div>
+
+      <!-- 右半部 -->
+      <div class="column">
+        <!-- 番茄鐘 -->
+        <section id="timerSection" class="card">
+          <div class="card-header">
+            <div class="card-title">番茄鐘</div>
+            <div class="card-subtitle">預設 25 分鐘，你可以在設定中調整</div>
+          </div>
+
+          <div class="timer-display" id="timerDisplay">25:00</div>
+
+          <div class="timer-controls">
+            <button class="btn primary" id="timerStart">▶ 開始</button>
+            <button class="btn" id="timerPause">⏸ 暫停</button>
+            <button class="btn" id="timerReset">⟲ 重設</button>
+          </div>
+
+          <div class="timer-status" id="timerStatus">計時尚未開始</div>
+        </section>
+
+        <!-- Gallery -->
+        <section id="gallerySection" class="card">
+          <div class="card-header">
+            <div class="card-title">小小 Gallery（用 data-attribute 篩選）</div>
+            <div class="card-subtitle">純 CSS 假圖示，無需下載圖片檔</div>
+          </div>
+
+          <div class="gallery-filters">
+            <button class="chip active" data-gallery-filter="all">全部</button>
+            <button class="chip" data-gallery-filter="work">學習 / 工作</button>
+            <button class="chip" data-gallery-filter="life">生活</button>
+            <button class="chip" data-gallery-filter="fun">Fun</button>
+          </div>
+
+          <div class="gallery-grid" id="galleryGrid">
+            <article class="gallery-item" data-category="work">
+              <div
+                class="gallery-thumb"
+                style="background-image: linear-gradient(135deg, #2563eb, #4f46e5)"
+              ></div>
+              <div class="gallery-body">
+                <div class="gallery-title">Code Session</div>
+                <span class="gallery-tag">學習 / 工作</span>
+              </div>
+            </article>
+
+            <article class="gallery-item" data-category="life">
+              <div
+                class="gallery-thumb"
+                style="background-image: linear-gradient(135deg, #16a34a, #22c55e)"
+              ></div>
+              <div class="gallery-body">
+                <div class="gallery-title">Morning Walk</div>
+                <span class="gallery-tag">生活</span>
+              </div>
+            </article>
+
+            <article class="gallery-item" data-category="fun">
+              <div
+                class="gallery-thumb"
+                style="background-image: linear-gradient(135deg, #e11d48, #f97316)"
+              ></div>
+              <div class="gallery-body">
+                <div class="gallery-title">Gaming Time</div>
+                <span class="gallery-tag">Fun</span>
+              </div>
+            </article>
+
+            <article class="gallery-item" data-category="work">
+              <div
+                class="gallery-thumb"
+                style="background-image: linear-gradient(135deg, #06b6d4, #0ea5e9)"
+              ></div>
+              <div class="gallery-body">
+                <div class="gallery-title">Data Visual</div>
+                <span class="gallery-tag">學習 / 工作</span>
+              </div>
+            </article>
+
+            <article class="gallery-item" data-category="life">
+              <div
+                class="gallery-thumb"
+                style="background-image: linear-gradient(135deg, #a855f7, #ec4899)"
+              ></div>
+              <div class="gallery-body">
+                <div class="gallery-title">Coffee Break</div>
+                <span class="gallery-tag">生活</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- 設定 -->
+        <section id="settingsSection" class="card">
+          <div class="card-header">
+            <div class="card-title">設定</div>
+            <div class="card-subtitle">示範表單 + 正規表達式驗證 + localStorage</div>
+          </div>
+
+          <form id="settingsForm" novalidate>
+            <div class="field-group">
+              <label for="nameInput">暱稱</label>
+              <input
+                type="text"
+                id="nameInput"
+                placeholder="想怎麼稱呼你？"
+              />
+              <p class="helper">會顯示在勵志句子裡。</p>
+            </div>
+
+            <div class="field-group">
+              <label for="emailInput">Email（簡單驗證）</label>
+              <input
+                type="email"
+                id="emailInput"
+                placeholder="you@example.com"
+              />
+              <p class="helper">
+                使用正規表達式檢查基本格式：英數字 + @ + 網域。
+              </p>
+              <p class="error" id="emailError" style="display: none">
+                Email 格式好像怪怪的，再檢查看看 🙏
+              </p>
+            </div>
+
+            <div class="field-group">
+              <label for="focusMinutesInput">單次專注時間（分鐘）</label>
+              <input
+                type="number"
+                id="focusMinutesInput"
+                min="5"
+                max="90"
+                step="5"
+                value="25"
+              />
+              <p class="helper">
+                會影響番茄鐘的長度。建議 25 分鐘，休息 5 分鐘。
+              </p>
+            </div>
+
+            <button type="submit" class="btn primary">💾 儲存設定</button>
+            <p class="success-msg" id="settingsSaved" style="display: none">
+              已儲存設定！
+            </p>
+          </form>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" id="aboutModal">
+    <div class="modal">
+      <header>
+        <div class="brand-text">
+          <h2>這個頁面在幹嘛？</h2>
+          <p>專門拿來練前端的「迷你實驗室」。</p>
+        </div>
+        <button id="modalCloseBtn">✕</button>
+      </header>
+      <div class="modal-content">
+        <p>
+          這個單頁示範了很多前端基本功：DOM 操作、事件、localStorage、正規表達式、
+          data-* attribute、深色模式切換、平滑捲動等等。
+        </p>
+        <p style="margin-top: 0.6rem">
+          你可以隨便改 HTML / CSS / JS 看會發生什麼事，然後在 DevTools 觀察。
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn primary" id="modalOkBtn">好，去玩玩看！</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========= 工具小函式 =========
+    function $(selector, scope = document) {
+      return scope.querySelector(selector);
+    }
+    function $all(selector, scope = document) {
+      return Array.from(scope.querySelectorAll(selector));
+    }
+
+    // ========= 主題切換 =========
+    const themeToggleBtn = $("#themeToggle");
+    const root = document.documentElement;
+
+    function applyTheme(theme) {
+      if (theme === "dark") {
+        root.classList.add("dark");
+        themeToggleBtn.textContent = "☀️ 淺色模式";
+      } else {
+        root.classList.remove("dark");
+        themeToggleBtn.textContent = "🌙 深色模式";
+      }
+    }
+
+    const savedTheme = localStorage.getItem("theme");
+    applyTheme(savedTheme || "light");
+
+    themeToggleBtn.addEventListener("click", () => {
+      const isDark = root.classList.toggle("dark");
+      const newTheme = isDark ? "dark" : "light";
+      localStorage.setItem("theme", newTheme);
+      applyTheme(newTheme);
+    });
+
+    // ========= 導覽列平滑捲動 =========
+    const navLinks = $all("nav a");
+    navLinks.forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        const targetId = link.getAttribute("href");
+        const section = document.querySelector(targetId);
+        if (!section) return;
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        navLinks.forEach((l) => l.classList.remove("active"));
+        link.classList.add("active");
+      });
+    });
+
+    // ========= Dashboard: 時間 + 日期 + 隨機句子 =========
+    const clockEl = $("#clock");
+    const dayOfWeekEl = $("#dayOfWeek");
+    const dateStrEl = $("#dateStr");
+    const quoteEl = $("#quote");
+
+    const quotes = [
+      "「成功不是運氣，是每天一點點的累積。」",
+      "「寫不出來時，先寫爛，再慢慢變好。」",
+      "「程式會騙你，bug 不會。」",
+      "「能被自己昨天的程式碼噁心到，代表你進步了。」",
+      "「別怕慢，只怕你停。」"
+    ];
+
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, "0");
+      const m = String(now.getMinutes()).padStart(2, "0");
+      const s = String(now.getSeconds()).padStart(2, "0");
+      clockEl.textContent = `${h}:${m}:${s}`;
+
+      const days = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+      dayOfWeekEl.textContent = days[now.getDay()];
+
+      const y = now.getFullYear();
+      const mon = String(now.getMonth() + 1).padStart(2, "0");
+      const d = String(now.getDate()).padStart(2, "0");
+      dateStrEl.textContent = `${y}/${mon}/${d}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    function updateQuote() {
+      const name = ($("#nameInput").value || "你").trim();
+      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      quoteEl.textContent = randomQuote.replace("你", name);
+    }
+    updateQuote();
+    setInterval(updateQuote, 1000 * 60 * 3); // 每 3 分鐘換一次
+
+    // ========= 待辦清單 =========
+    const todoForm = $("#todoForm");
+    const todoInput = $("#todoInput");
+    const todoListEl = $("#todoList");
+    const filterButtons = $all(".todo-filters .chip");
+    const completedCountEl = $("#completedCount");
+
+    let todos = [];
+
+    function loadTodos() {
+      try {
+        const raw = localStorage.getItem("todos");
+        if (raw) {
+          todos = JSON.parse(raw);
+        }
+      } catch (err) {
+        console.error("載入 todos 失敗:", err);
+        todos = [];
+      }
+    }
+
+    function saveTodos() {
+      localStorage.setItem("todos", JSON.stringify(todos));
+    }
+
+    function renderTodos(filter = "all") {
+      todoListEl.innerHTML = "";
+      const filtered = todos.filter((todo) => {
+        if (filter === "active") return !todo.done;
+        if (filter === "done") return todo.done;
+        return true;
+      });
+
+      filtered.forEach((todo) => {
+        const li = document.createElement("li");
+        li.className = "todo-item" + (todo.done ? " done" : "");
+        li.dataset.id = todo.id;
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = todo.done;
+        checkbox.addEventListener("change", () => toggleTodo(todo.id));
+
+        const span = document.createElement("span");
+        span.textContent = todo.text;
+
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "刪除";
+        delBtn.classList.add("delete");
+        delBtn.addEventListener("click", () => deleteTodo(todo.id));
+
+        li.appendChild(checkbox);
+        li.appendChild(span);
+        li.appendChild(delBtn);
+        todoListEl.appendChild(li);
+      });
+
+      const doneCount = todos.filter((t) => t.done).length;
+      completedCountEl.textContent = doneCount;
+    }
+
+    function addTodo(text) {
+      const todo = {
+        id: Date.now().toString(),
+        text,
+        done: false
+      };
+      todos.unshift(todo);
+      saveTodos();
+      const activeFilterBtn = filterButtons.find((btn) =>
+        btn.classList.contains("active")
+      );
+      const currentFilter =
+        activeFilterBtn?.dataset.filter || "all";
+      renderTodos(currentFilter);
+    }
+
+    function toggleTodo(id) {
+      todos = todos.map((t) =>
+        t.id === id ? { ...t, done: !t.done } : t
+      );
+      saveTodos();
+      const activeFilterBtn = filterButtons.find((btn) =>
+        btn.classList.contains("active")
+      );
+      const currentFilter =
+        activeFilterBtn?.dataset.filter || "all";
+      renderTodos(currentFilter);
+    }
+
+    function deleteTodo(id) {
+      todos = todos.filter((t) => t.id !== id);
+      saveTodos();
+      const activeFilterBtn = filterButtons.find((btn) =>
+        btn.classList.contains("active")
+      );
+      const currentFilter =
+        activeFilterBtn?.dataset.filter || "all";
+      renderTodos(currentFilter);
+    }
+
+    todoForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const text = todoInput.value.trim();
+      if (!text) return;
+      addTodo(text);
+      todoInput.value = "";
+    });
+
+    filterButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        filterButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderTodos(btn.dataset.filter);
+      });
+    });
+
+    loadTodos();
+    renderTodos();
+
+    // ========= 番茄鐘 =========
+    const timerDisplay = $("#timerDisplay");
+    const timerStartBtn = $("#timerStart");
+    const timerPauseBtn = $("#timerPause");
+    const timerResetBtn = $("#timerReset");
+    const timerStatus = $("#timerStatus");
+    const pomodoroCountEl = $("#pomodoroCount");
+    let focusMinutes = Number($("#focusMinutesInput").value) || 25;
+
+    let timerSeconds = focusMinutes * 60;
+    let timerInterval = null;
+    let pomodoroCount =
+      Number(localStorage.getItem("pomodoroCount") || "0");
+
+    function updateTimerDisplay() {
+      const minutes = String(Math.floor(timerSeconds / 60)).padStart(
+        2,
+        "0"
+      );
+      const seconds = String(timerSeconds % 60).padStart(2, "0");
+      timerDisplay.textContent = `${minutes}:${seconds}`;
+    }
+
+    function setTimerStatus(message) {
+      timerStatus.textContent = message;
+    }
+
+    function startTimer() {
+      if (timerInterval) return; // already running
+      if (timerSeconds <= 0) {
+        timerSeconds = focusMinutes * 60;
+      }
+      setTimerStatus("專注中，加油！");
+      timerInterval = setInterval(() => {
+        timerSeconds--;
+        updateTimerDisplay();
+        if (timerSeconds <= 0) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          setTimerStatus("時間到！休息一下吧 👏");
+          pomodoroCount++;
+          localStorage.setItem(
+            "pomodoroCount",
+            String(pomodoroCount)
+          );
+          pomodoroCountEl.textContent = pomodoroCount;
+          // 簡單提示
+          alert("番茄結束！記得起來動一動。");
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      if (!timerInterval) return;
+      clearInterval(timerInterval);
+      timerInterval = null;
+      setTimerStatus("已暫停。");
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerSeconds = focusMinutes * 60;
+      updateTimerDisplay();
+      setTimerStatus("計時尚未開始");
+    }
+
+    timerStartBtn.addEventListener("click", startTimer);
+    timerPauseBtn.addEventListener("click", pauseTimer);
+    timerResetBtn.addEventListener("click", resetTimer);
+
+    pomodoroCountEl.textContent = pomodoroCount;
+    updateTimerDisplay();
+
+    // ========= Gallery 篩選（data-attribute） =========
+    const galleryFilterButtons = $all(
+      "[data-gallery-filter]"
+    );
+    const galleryItems = $all(".gallery-item");
+
+    galleryFilterButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        galleryFilterButtons.forEach((b) =>
+          b.classList.remove("active")
+        );
+        btn.classList.add("active");
+        const filter = btn.dataset.galleryFilter;
+        galleryItems.forEach((item) => {
+          const cat = item.dataset.category;
+          const show = filter === "all" || cat === filter;
+          item.style.display = show ? "flex" : "none";
+        });
+      });
+    });
+
+    // ========= 設定表單（正規表達式驗證 + localStorage） =========
+    const settingsForm = $("#settingsForm");
+    const nameInput = $("#nameInput");
+    const emailInput = $("#emailInput");
+    const focusMinutesInput = $("#focusMinutesInput");
+    const emailError = $("#emailError");
+    const settingsSavedMsg = $("#settingsSaved");
+
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem("settings");
+        if (!raw) return;
+        const settings = JSON.parse(raw);
+        if (settings.name) nameInput.value = settings.name;
+        if (settings.email) emailInput.value = settings.email;
+        if (settings.focusMinutes) {
+          focusMinutesInput.value = settings.focusMinutes;
+          focusMinutes = Number(settings.focusMinutes);
+          timerSeconds = focusMinutes * 60;
+          updateTimerDisplay();
+        }
+      } catch (err) {
+        console.error("載入 settings 失敗:", err);
+      }
+    }
+    loadSettings();
+
+    // 簡單 Email 正規表達式
+    const emailRegex =
+      /^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$/;
+
+    settingsForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+      const focus = Number(focusMinutesInput.value);
+
+      if (email && !emailRegex.test(email)) {
+        emailError.style.display = "block";
+        return;
+      } else {
+        emailError.style.display = "none";
+      }
+
+      const settings = {
+        name,
+        email,
+        focusMinutes: focus
+      };
+      localStorage.setItem("settings", JSON.stringify(settings));
+
+      focusMinutes = focus || 25;
+      timerSeconds = focusMinutes * 60;
+      updateTimerDisplay();
+
+      settingsSavedMsg.style.display = "block";
+      setTimeout(() => {
+        settingsSavedMsg.style.display = "none";
+      }, 1800);
+
+      // 立刻更新勵志句子中的名字
+      updateQuote();
+    });
+
+    // ========= Modal =========
+    const aboutBtn = $("#aboutBtn");
+    const aboutModal = $("#aboutModal");
+    const modalCloseBtn = $("#modalCloseBtn");
+    const modalOkBtn = $("#modalOkBtn");
+
+    function openModal() {
+      aboutModal.classList.add("visible");
+    }
+    function closeModal() {
+      aboutModal.classList.remove("visible");
+    }
+
+    aboutBtn.addEventListener("click", openModal);
+    modalCloseBtn.addEventListener("click", closeModal);
+    modalOkBtn.addEventListener("click", closeModal);
+    aboutModal.addEventListener("click", (event) => {
+      if (event.target === aboutModal) {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>
