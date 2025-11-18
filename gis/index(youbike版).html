@@ -37,7 +37,7 @@
 </head>
 
 <body>
-    <button id="btn_request">取得臺北市咖啡廳列表</button>
+    <button id="btn_request">取得台北市YouBike列表</button>
 
     <div id="map"></div>
 
@@ -77,7 +77,47 @@
         let arrLayers = [];
 
         document.querySelector('button#btn_request').addEventListener('click', function (event) {
+            fetch('https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json', {
+                method: 'GET'
+            }).then(function (response) {
+                return response.json();
+            }).then(function (arr) {
+                if (layerGroup != null) {
+                    layerGroup.clearLayers();
+                    map.removeLayer(layerGroup);
 
+                    layerGroup = null;
+                    arrLayers = [];
+                }
+
+                let tbody = document.querySelector('table>tbody');
+                tbody.innerHTML = "";
+
+                for (let o of arr) {
+                    let tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${o['sno']}</td>
+                                     <td>${o['sna']}</td>
+                                     <td>${o['sarea']}</td>
+                                     <td>${o['ar']}</td>
+                                     <td>${o['lat']}</td>
+                                     <td>${o['lng']}</td>`;
+
+                    tbody.appendChild(tr)
+
+                    let marker = L.marker([o['latitude'], o['longitude']]).bindPopup(`${o['name']}`);
+
+                    marker.addEventListener('click', function (event) {
+                        console.log(o)
+                    });
+
+                    arrLayers.push(marker);
+
+                }
+
+                layerGroup = L.layerGroup(arrLayers);
+                layerGroup.addTo(map);
+
+            });
         });
     </script>
 </body>
