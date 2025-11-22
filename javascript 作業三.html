@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <title>待辦清單 & 勵志小工具</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        /* --- 基本版面 --- */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, #2c3e50 0, #000 60%);
+            color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+
+        .app {
+            background: rgba(15, 15, 20, 0.96);
+            border-radius: 18px;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+            max-width: 960px;
+            width: 100%;
+            padding: 28px 24px 24px;
+            display: flex;
+            gap: 24px;
+            backdrop-filter: blur(8px);
+        }
+
+        @media (max-width: 768px) {
+            .app {
+                flex-direction: column;
+            }
+        }
+
+        h1 {
+            margin: 0 0 4px;
+            font-size: 26px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            margin: 0 0 20px;
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+
+        /* --- 左邊：待辦清單 --- */
+        .todo-section {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .todo-card {
+            background: #111319;
+            border-radius: 16px;
+            padding: 16px 16px 10px;
+            border: 1px solid #2c3e50;
+        }
+
+        #todo-form {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        #todo-input {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: 999px;
+            border: 1px solid #2c3e50;
+            background: #07090f;
+            color: #f5f5f5;
+            outline: none;
+        }
+
+        #todo-input:focus {
+            border-color: #4fa3ff;
+            box-shadow: 0 0 0 1px rgba(79, 163, 255, 0.5);
+        }
+
+        .btn {
+            border: none;
+            border-radius: 999px;
+            padding: 9px 14px;
+            font-size: 14px;
+            cursor: pointer;
+            background: #4fa3ff;
+            color: #0b1018;
+            font-weight: 600;
+            transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(79, 163, 255, 0.35);
+            background: #6bb1ff;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .filters {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            border-radius: 999px;
+            border: 1px solid #2c3e50;
+            background: transparent;
+            color: #d0d3d4;
+            font-size: 12px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .filter-btn.active {
+            background: #4fa3ff;
+            color: #0b1018;
+            border-color: #4fa3ff;
+        }
+
+        .stats {
+            font-size: 13px;
+            color: #95a5a6;
+            margin-bottom: 10px;
+        }
+
+        #todo-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: #07090f;
+            margin-bottom: 6px;
+            border: 1px solid transparent;
+            transition: background 0.15s ease, border 0.15s ease, transform 0.1s ease;
+        }
+
+        .todo-item:hover {
+            border-color: #34495e;
+            transform: translateY(-1px);
+        }
+
+        .todo-item.completed {
+            opacity: 0.6;
+        }
+
+        .todo-text {
+            flex: 1;
+            margin-left: 8px;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: #7f8c8d;
+        }
+
+        .todo-delete {
+            border: none;
+            background: transparent;
+            color: #e74c3c;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 2px 6px;
+        }
+
+        /* --- 右邊：勵志名言 (AJAX) --- */
+        .side-section {
+            flex: 1.4;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .quote-card {
+            background: linear-gradient(145deg, #141b29, #0b1018);
+            border-radius: 16px;
+            padding: 16px 18px 14px;
+            border: 1px solid #34495e;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .quote-title {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .quote-subtitle {
+            font-size: 13px;
+            color: #95a5a6;
+            margin-bottom: 14px;
+        }
+
+        .quote-text {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .quote-author {
+            font-size: 13px;
+            color: #bdc3c7;
+            margin-bottom: 10px;
+            text-align: right;
+        }
+
+        .quote-status {
+            font-size: 12px;
+            color: #7f8c8d;
+            min-height: 16px;
+            margin-bottom: 8px;
+        }
+
+        .small-note {
+            font-size: 11px;
+            color: #7f8c8d;
+            margin-top: auto;
+        }
+
+        .quote-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .quote-btn {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        /* 捲軸微調 (optional) */
+        #todo-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #todo-list::-webkit-scrollbar-track {
+            background: #05070b;
+        }
+
+        #todo-list::-webkit-scrollbar-thumb {
+            background: #34495e;
+            border-radius: 999px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <!-- 左邊：待辦清單 -->
+        <section class="todo-section">
+            <header>
+                <h1>今日待辦清單</h1>
+                <p class="subtitle">寫完程式、好好健身，再補個英文就完美了 📝💪</p>
+            </header>
+
+            <div class="todo-card">
+                <!-- 新增任務表單 -->
+                <form id="todo-form">
+                    <input id="todo-input" type="text" placeholder="輸入待辦事項，例如：完成 JavaScript 作業" required>
+                    <button class="btn" type="submit">新增</button>
+                </form>
+
+                <!-- 篩選按鈕 -->
+                <div class="filters">
+                    <button class="filter-btn active" data-filter="all">全部</button>
+                    <button class="filter-btn" data-filter="active">未完成</button>
+                    <button class="filter-btn" data-filter="completed">已完成</button>
+                </div>
+
+                <!-- 統計 -->
+                <div class="stats">
+                    <span id="stats-text">目前沒有任何待辦事項。</span>
+                </div>
+
+                <!-- 待辦清單 -->
+                <ul id="todo-list"></ul>
+            </div>
+        </section>
+
+        <!-- 右邊：AJAX 勵志名言 -->
+        <aside class="side-section">
+            <div class="quote-card">
+                <div>
+                    <div class="quote-title">今日一句 · Motivation</div>
+                    <div class="quote-subtitle">使用 AJAX (fetch) 從 API 抓取英語勵志名言</div>
+                </div>
+
+                <p id="quote-text" class="quote-text">載入中...</p>
+                <p id="quote-author" class="quote-author"></p>
+                <div id="quote-status" class="quote-status"></div>
+
+                <div class="quote-actions">
+                    <button id="btn-new-quote" class="btn quote-btn" type="button">
+                        換一句
+                    </button>
+                </div>
+
+                <p class="small-note">JS 技術示範：DOM 操作、事件處理、AJAX、localStorage。</p>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        // =======================
+        // 待辦清單相關
+        // =======================
+
+        // DOM 元素
+        const todoForm = document.getElementById('todo-form');
+        const todoInput = document.getElementById('todo-input');
+        const todoList = document.getElementById('todo-list');
+        const statsText = document.getElementById('stats-text');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+
+        // 資料：待辦事項陣列
+        let todos = [];
+        let currentFilter = 'all';
+
+        // 讀取 localStorage 裡的舊資料
+        const saved = localStorage.getItem('myTodos');
+        if (saved) {
+            try {
+                todos = JSON.parse(saved);
+            } catch (err) {
+                console.error('localStorage 解析失敗：', err);
+            }
+        }
+
+        // 儲存到 localStorage
+        function saveTodos() {
+            localStorage.setItem('myTodos', JSON.stringify(todos));
+        }
+
+        // 新增待辦
+        todoForm.addEventListener('submit', function (e) {
+            e.preventDefault(); // 防止表單送出重新整理
+
+            const text = todoInput.value.trim();
+            if (!text) return;
+
+            const newTodo = {
+                id: Date.now(),    // 簡單的唯一 id
+                text: text,
+                completed: false
+            };
+
+            todos.unshift(newTodo); // 新的放最上面
+            todoInput.value = '';
+            renderTodos();
+            saveTodos();
+        });
+
+        // 事件委派：處理勾選完成 / 刪除
+        todoList.addEventListener('click', function (e) {
+            const target = e.target;
+            const li = target.closest('.todo-item');
+            if (!li) return;
+
+            const id = Number(li.dataset.id);
+
+            // 刪除按鈕
+            if (target.matches('.todo-delete')) {
+                todos = todos.filter(t => t.id !== id);
+                renderTodos();
+                saveTodos();
+            }
+        });
+
+        // 事件委派：勾選 checkbox
+        todoList.addEventListener('change', function (e) {
+            const target = e.target;
+            if (!target.matches('input[type="checkbox"]')) return;
+
+            const li = target.closest('.todo-item');
+            const id = Number(li.dataset.id);
+
+            const todo = todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = target.checked;
+            }
+
+            renderTodos();
+            saveTodos();
+        });
+
+        // 篩選按鈕
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentFilter = btn.dataset.filter;
+
+                // 切換 active 樣式
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                renderTodos();
+            });
+        });
+
+        // 根據 currentFilter 渲染畫面
+        function renderTodos() {
+            todoList.innerHTML = '';
+
+            let filtered = todos;
+            if (currentFilter === 'active') {
+                filtered = todos.filter(t => !t.completed);
+            } else if (currentFilter === 'completed') {
+                filtered = todos.filter(t => t.completed);
+            }
+
+            if (filtered.length === 0) {
+                statsText.textContent = '目前沒有符合條件的待辦事項。';
+            } else {
+                const total = todos.length;
+                const completedCount = todos.filter(t => t.completed).length;
+                const activeCount = total - completedCount;
+                statsText.textContent =
+                    `總共 ${total} 筆，未完成 ${activeCount} 筆，已完成 ${completedCount} 筆。`;
+            }
+
+            filtered.forEach(todo => {
+                const li = document.createElement('li');
+                li.className = 'todo-item';
+                if (todo.completed) li.classList.add('completed');
+                li.dataset.id = todo.id;
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = todo.completed;
+
+                const span = document.createElement('span');
+                span.className = 'todo-text';
+                span.textContent = todo.text;
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'todo-delete';
+                delBtn.innerHTML = '&times;';
+
+                li.appendChild(checkbox);
+                li.appendChild(span);
+                li.appendChild(delBtn);
+
+                todoList.appendChild(li);
+            });
+        }
+
+        // 頁面載入時先渲染一次
+        renderTodos();
+
+        // =======================
+        // 勵志名言 AJAX
+        // =======================
+        const quoteTextEl = document.getElementById('quote-text');
+        const quoteAuthorEl = document.getElementById('quote-author');
+        const quoteStatusEl = document.getElementById('quote-status');
+        const btnNewQuote = document.getElementById('btn-new-quote');
+
+        async function fetchQuote() {
+            quoteStatusEl.textContent = '正在向 API 取得資料中...';
+            quoteTextEl.textContent = '載入中...';
+            quoteAuthorEl.textContent = '';
+
+            try {
+                // 使用 fetch (AJAX) 從公開 API 抓一則英文勵志句子
+                const res = await fetch('https://api.quotable.io/random?tags=inspirational');
+                if (!res.ok) {
+                    throw new Error('HTTP 錯誤狀態：' + res.status);
+                }
+                const data = await res.json();
+
+                quoteTextEl.textContent = data.content;
+                quoteAuthorEl.textContent = data.author ? '— ' + data.author : '';
+                quoteStatusEl.textContent = '資料來源：quotable.io API';
+            } catch (err) {
+                console.error(err);
+                quoteTextEl.textContent = '載入名言失敗，可以稍後再試一次。';
+                quoteAuthorEl.textContent = '';
+                quoteStatusEl.textContent = '錯誤訊息已印在 console。';
+            }
+        }
+
+        // 換一句按鈕
+        btnNewQuote.addEventListener('click', fetchQuote);
+
+        // 一進頁面就先抓一次
+        fetchQuote();
+    </script>
+</body>
+
+</html>

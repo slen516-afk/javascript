@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <ul id="list">
+        <li>第一個</li>
+        <li>第二個</li>
+        <li>第三個</li>
+    </ul>
+
+    <script>
+        const list = document.querySelector('#list');
+
+        list.addEventListener('click', function (e) {
+            console.log('e 是：', e);          // 整個事件物件
+            console.log('e.target 是：', e.target); // 真的被點到的那個 li
+        });
+    </script>
+
+</body>
+
+</html>

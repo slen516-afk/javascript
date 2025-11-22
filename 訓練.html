@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div class="filters">
+        <button class="filters-btn ">all</button>
+        <button class="filter-btn">undone</button>
+        <button class="filter-btn">done</button>
+    </div>
+    <p>You are my sunshine</p>
+
+    <div class="stats">
+        <span id="stats-text">not yet have any to do list</span>
+    </div>
+
+
+
+    <ul id="list">
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+    </ul>
+
+
+    <aside class="side-section">
+        <div class="quote-card">
+            <div>
+                <div class="quote-title">今日一句</div>
+                <div class="quote-subtitle">AJAX(fetch)</div>
+            </div>
+        </div>
+        <p id="quote-text">testing...</p>
+        <p id="quote-author" class="quote-author"></p>
+
+        <div class="quote-actions">
+            <button id="btn-new-quote" class="btn quote">點我for no reason</button>
+        </div>
+    </aside>
+
+
+    <script>
+        const list = document.querySelector('#list');
+        const saved = localStorage.getItem('myTodos');
+        if (saved) {
+            try {
+                todos = JSON.parse(saved);
+            } catch (err) {
+                console.error('localStorage', err);
+            }
+        }
+        list.addEventListener('click', function (e) {
+            console.log('e是:', e);
+            console.log("e.target is", e.target);
+            // console.log("")
+
+        })
+        btnNewQuote.addEventListener('click', fetchQuote);
+        fetchQuote();
+    </script>
+</body>
+
+</html>
+
+<!-- const res = await fetch('https://api.xxxxxxx');\ -->
