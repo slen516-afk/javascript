@@ -86,9 +86,35 @@
             }
             return true;
         }
+<<<<<<< HEAD
+        function renderPrimes(max){
+            const container = document.querySelector('#prime-container');
+            container.innerHTML = '';
+
+            let delay = 0;
+            for (let n = 2; n <= max; n++){
+                if (isPrime(n)){
+                    const bubble = document.createElement('div');
+                    bubble.classList.add('prime-bubble');
+                    bubble.textContent = n;
+
+                    bubble.style.setProperty('--delay', `${delay}s`);
+                    delay += 0.1;
+
+                    container.appendChild(bubble);
+                }
+            }
+        }
+
+        renderPrimes(100)
+
+        const container = document.querySelector('#prime-container');
+        // const max = 100;
+=======
 
         const container = document.querySelector('#prime-container');
         const max = 100;
+>>>>>>> d17340687e7a25fd6d03a2eba1d933d7b45f59eb
         let delay = 0;
 
         for (let n = 2; n <= max; n++) {
