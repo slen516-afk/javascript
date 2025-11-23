@@ -19,6 +19,14 @@
             justify-content: flex-start;
             padding-top: 40px;
         }
+
+        .meaning-less {
+            font-size: 3em;
+        }
+
+        #list {
+            text-align: left;
+        }
     </style>
     <script>
         // setTimeout(function () {
@@ -84,19 +92,20 @@
         <button class="filter-btn" disabled>undone</button>
         <button class="filter-btn">done</button>
     </div>
-    <p>You are my sunshine</p>
+    <p class="meaning-less">Hello!And Welcome!</p>
 
     <div class="stats">
-        <span id="stats-text">not yet have any to do list</span>
+        <h1 id="stats-text">to do list</h1>
+        <ul id="list">
+            <li>健身</li>
+            <li>打code</li>
+            <li>英文、陪女友</li>
+        </ul>
     </div>
 
 
 
-    <ul id="list">
-        <li>1</li>
-        <li>2</li>
-        <li>3</li>
-    </ul>
+
 
 
     <aside class="side-section">
@@ -105,12 +114,15 @@
                 <div class="quote-title">今日一句</div>
                 <div class="quote-subtitle">AJAX(fetch)</div>
             </div>
+            <p id="quote-text" class="quote-text">載入中..</p>
+            <p id="quote-author" class="quote-author"></p>
+
         </div>
         <p id="quote-text">testing...</p>
         <p id="quote-author" class="quote-author"></p>
 
         <div class="quote-actions">
-            <button id="btn-new-quote" class="btn quote">點我for no reason</button>
+            <button id="btn-new-quote" class="btn quote" type="button">換一句</button>
         </div>
     </aside>
 
@@ -153,9 +165,25 @@
                 }
             }
         )
-        docu
+        async function fetchQuote() {
+            quoteStatusEl.textContent = '正在向 API 取得資料中...';
+            quoteTextEl.textContent = '載入中...';
+            quoteAuthorEl.textContent = '';
+        }
 
+        try {
+            const res = await fetch('https://motivational-spark-api.vercel.app/api/quotes/random');
+            if (!res.ok) {
+                throw new Error('HTTP 錯誤狀態：' + res.status);
+            }
+            const data = await res.json();
+            quoteTextEl.textContent = data.quote;
+            quoteAuthorEl.textContent = data.author ? '— ' + data.author : '';
+            quoteStatusEl.textContent = '資料來源：quotable.io API';
 
+            btnNewQuote.addEventListener('click',
+                fetchQuote);
+            fetchQuote();
     </script>
 </body>
 
