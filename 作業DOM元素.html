@@ -86,14 +86,14 @@
             }
             return true;
         }
-<<<<<<< HEAD
-        function renderPrimes(max){
+
+        function renderPrimes(max) {
             const container = document.querySelector('#prime-container');
             container.innerHTML = '';
 
             let delay = 0;
-            for (let n = 2; n <= max; n++){
-                if (isPrime(n)){
+            for (let n = 2; n <= max; n++) {
+                if (isPrime(n)) {
                     const bubble = document.createElement('div');
                     bubble.classList.add('prime-bubble');
                     bubble.textContent = n;
@@ -106,15 +106,15 @@
             }
         }
 
-        renderPrimes(100)
-
-        const container = document.querySelector('#prime-container');
-        // const max = 100;
-=======
+        // renderPrimes(100)
 
         const container = document.querySelector('#prime-container');
         const max = 100;
->>>>>>> d17340687e7a25fd6d03a2eba1d933d7b45f59eb
+
+
+        // // const container = document.querySelector('#prime-container');
+        // const max = 100;
+
         let delay = 0;
 
         for (let n = 2; n <= max; n++) {
