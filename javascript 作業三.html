@@ -278,7 +278,7 @@
         <section class="todo-section">
             <header>
                 <h1>今日待辦清單</h1>
-                <p class="subtitle">寫完程式、好好健身，再補個英文就完美了 📝💪</p>
+                <p class="subtitle"> 📝💪</p>
             </header>
 
             <div class="todo-card">
@@ -489,13 +489,13 @@
 
             try {
                 // 使用 fetch (AJAX) 從公開 API 抓一則英文勵志句子
-                const res = await fetch('https://api.quotable.io/random?tags=inspirational');
+                const res = await fetch('https://motivational-spark-api.vercel.app/api/quotes/random');
                 if (!res.ok) {
                     throw new Error('HTTP 錯誤狀態：' + res.status);
                 }
                 const data = await res.json();
 
-                quoteTextEl.textContent = data.content;
+                quoteTextEl.textContent = data.quote;
                 quoteAuthorEl.textContent = data.author ? '— ' + data.author : '';
                 quoteStatusEl.textContent = '資料來源：quotable.io API';
             } catch (err) {
