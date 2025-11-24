@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=s, initial-scale=1.0">
+    <title>Document</title>
+
+
+</head>
+<style>
+    #myList {
+        margin-left: 4em;
+    }
+</style>
+
+<body>
+
+    <button id="clicktobig" style="width:100px ;height:50px;"></button>
+    <ul id="myList">
+        <li>2</li>
+        <li>1</li>
+        <li>3</li>
+    </ul>
+    <input type="text" id="txt" value="" />
+    <button id="btn01" onclick="javascript :alert('This is a javascript')">按鈕01</button>
+
+    <script>
+
+        let fruits = ["Apple"];
+
+        fruits.push("Orange", "Peach");
+        // fruits.unshift("Pineapple", "Pear")
+        fruits.push("Pineapple", "Pear")
+
+        alert(fruits)
+
+
+
+        // let arr = ['Apple', { name: 'John' }, true, function () { alert('hello'); }];
+        // alert(arr[0])
+        // alert(arr[1].name)
+        // alert(arr[2])
+        // alert(arr[3])
+
+
+
+
+
+
+        // let fruits = ['Apple', 'orange', 'plum'];
+
+        // alert(fruits[0]);
+        // alert(fruits[1])
+
+        // alert(fruits[2])
+
+        // fruits[2] = "pear"
+        // alert(fruits[2])
+        // console.log(fruits)
+        // alert(fruits)
+
+
+        // let arr = new Array(); = let arr = [];
+
+
+
+
+
+
+
+
+
+
+
+        // let userName = 'John';
+
+        // function showMessage() {
+        //     userName = "Bob";
+
+        //     let message = 'Hello, ' + userName;
+        //     alert(message);
+        // }
+        // alert(userName);
+        // showMessage();
+        // alter(userName);
+
+
+
+        // function showMessage(from, text) {
+        //     from = '*' + from + '*';
+        //     alert(from + ': ' + text);
+        // }
+        // let from = "Ann";
+        // showMessage(from, "Hello");
+        // alert(from);
+
+
+
+        // sayHi("Ryan");
+
+        // function sayHi(name) {
+        //     alert(`Hello, ${name}`);
+        // }
+
+
+
+        // let age = prompt('your age?', 18);
+        // switch (age) {
+        //     case 18:
+        //         alert("Won't work");
+        //     case "18":
+        //         alert("This works");
+        //         break;
+
+        //     default: age
+        //         alert("Any value not equal to one above");
+        // }
+
+        // function showMessage() {
+        //     alert('Hello everyone')
+        // }
+        // showMessage()
+
+
+
+        // for (let i = 0; i < 10; i++) {
+        //     if (i % 2) {
+        //         alert(i)
+        //     }
+        // }
+
+        // for (let i = 0; i < 10; i++) {
+        //     if (i % 2 == 0) continue
+        //     alert(i)
+        // }
+
+
+
+
+        // let sum = 0;
+        // while (true) {
+        //     let value = +prompt("Enter a nu", "");
+        //     if (!value) break;
+        //     sum += value;
+
+        // }
+        // alert('SUM:' + sum);
+
+
+
+        // function sumAll(...args) {
+        //     let sum = 0;
+        //     for (let arg of args) sum += arg;
+        //     return sum
+
+        // }
+
+        // alert(sumAll(1));
+        // alert(sumAll(1, 2));
+        // alert(sumAll(1, 2, 3));
+
+
+        // function sum(a, b) {
+        //     return a + b
+        // }
+        // alert(sum(4, 2, 3, 4, 5))
+
+
+
+        // let room = {
+        //     number: 23
+        // };
+        // let meetup = {
+        //     title: "Conference",
+        //     occupiedBy: [{ name: "John" }, { name: "Alice" }],
+        //     place: room
+        // };
+
+        // room.occupiedBy = meetup;
+        // meetup.self = meetup;
+        // alert(JSON.stringify(meetup, function replacer(key, value) {
+        //     if (key !== "" && value === meetup) {
+        //         return undefined;
+        //     }
+        //     return value;
+        // }));
+
+
+        // // let id = Symbol("id");
+        // // alert(id.toString())
+        // let id = Symbol("id");
+        // alert(id.description);
+
+
+        // alert(1 && 0);
+        // alert(1 && "return second cause first is true")
+
+
+        // alert(null & "Return first cuz first is falsy")
+        // alert(0 & "it's a falsy")
+
+
+        // let currentUser = "";
+        // let defaultUser = ""
+
+
+        // let name = currentUser || defaultUser || "unnamed";
+        // alert(name)
+
+
+        // let hour = 20;
+        // let isWeekend = true;
+        // if (hour < 10 || hour > 18 || isWeekend) {
+        //     alert('The offie is closed')
+        // }
+
+
+
+        // let hour = 9
+        // if (hour < 10 || hour > 18) {
+        //     alert('The Office is closed.')
+
+
+
+        // document.querySelector('clicktobig').addEventListener('dblclick', function (event) {
+        //     count++;
+        //     width += 10;
+        //     height += 10;
+        //     this.innerText = "放大按鈕"
+        // })
+        let myList = document.querySelector('ul#myList');
+        let removeNode = document.querySelectorAll('li')[1];
+        myList.removeChild(removeNode);
+        let txt = document.querySelector('input#txt');
+        txt.setAttribute('name', 'txt');
+        txt.setAttribute('value', '1234');
+        txt.setAttribute('data-price', '10000');
+        txt.setAttribute('data-title', 'This is a title');
+        txt.setAttribute('data-product-id', '20');
+
+        document.write('<hr />');
+        document.write(txt.getAttribute('data-title') + '<br/>');
+        document.wrtie(txt.getAttribute('data-price') + '<br/>');
+
+        let btn01 = document.querySelector
+            ("button#btn01");
+        btn01.se
+    </script>
+
+</body>
+
+</html>
