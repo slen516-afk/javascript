@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+        integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+    <style>
+        #map {
+            height: 640px
+        }
+    </style> -->
+
+
+    <!-- leaflet css 設定 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <!-- 自訂 css -->
+    <style>
+        table,
+        thead,
+        th,
+        tbody,
+        tr,
+        td {
+            border: 1px solid;
+        }
+
+        #map {
+            height: 480px;
+        }
+
+        /* 資訊面板：點擊 marker 顯示站點資訊 */
+        #info {
+            border: 1px solid #ccc;
+            padding: 8px;
+            margin: 8px 0;
+            background: #fafafa;
+            max-width: 100%;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="btn_request">取得台北市YouBike列表</button>
+
+    <div id="map"></div>
+
+    <!-- 點選 marker 時顯示詳細資訊 -->
+    <div id="info">點選地圖上的站點以顯示站點資訊。</div>
+
+    <!-- <div id="map"></div>
+      -->
+
+    <table>
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>location</th>
+                <th>region</th>
+                <th>address</th>
+                <!-- <th>url</th> -->
+                <!-- <th>socket</th> -->
+                <!-- <th>latitude</th> -->
+                <!-- <th>longitude</th> -->
+            </tr>
+        </thead>
+        <tbody></tbody> <!--點點-->
+    </table>
+
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+        integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+    <script>
+        var map = L.map('map').setView([25.0339145, 121.5412233], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map); //地圖
+
+        let layerGroup = null;
+        let arrLayers = [];
+
+        // L.marker([25.0339145, 121.5412233]).addTo(map)
+        //     .bindPopup('自訂訊息<br>可以放 HTML')
+        document.querySelector('button#btn_request').addEventListener('click', function (event) {
+            fetch('https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json', {
+                method: 'GET'
+            }).then(function (response) {
+                return response.json();
+            }).then(function (arr) {
+                if (layerGroup != null) {
+                    layerGroup.clearLayers();
+                    map.removeLayer(layerGroup);
+
+                    layerGroup = null;
+                    arrLayers = [];
+                }
+
+                let tbody = document.querySelector('table>tbody');
+                tbody.innerHTML = "";
+
+                // helper: 把站點資訊顯示在 #info
+                function showStationInfo(o) {
+                    let lat = o['lat'] || o['latitude'] || '';
+                    let lng = o['lng'] || o['longitude'] || '';
+                    let sbi = o['sbi'] || o['available'] || '';
+                    let bemp = o['bemp'] || o['empty_slots'] || '';
+
+                    let html = `
+                        <strong>${o['sna'] || o['name'] || '站名不詳'}</strong><br>
+                        編號: ${o['sno'] || ''}<br>
+                        區域: ${o['sarea'] || ''}<br>
+                        地址: ${o['ar'] || ''}<br>
+                        可借車輛: ${sbi}<br>
+                        可停空位: ${bemp}<br>
+                        座標: ${lat}, ${lng}
+                    `;
+
+                    document.getElementById('info').innerHTML = html;
+                }
+
+                for (let o of arr) {
+                    let tr = document.createElement('tr');
+                    // 只建立與表頭對應的欄位（id, location, region, address），避免顯示 undefined
+                    tr.innerHTML = `<td>${o['sno']}</td>
+                                     <td>${o['sna']}</td>
+                                     <td>${o['sarea']}</td>
+                                     <td>${o['ar']}</td>`;
+
+                    tbody.appendChild(tr);
+
+                    // 使用正確的 API 欄位名稱：lat / lng 與 sna
+                    let lat = o['lat'] || o['latitude'];
+                    let lng = o['lng'] || o['longitude'];
+                    let name = o['sna'] || o['name'] || '站名';
+
+                    // 只有在有座標時才建立 marker
+                    if (lat && lng) {
+                        // 建立含站點詳細資訊的 popup 內容
+                        let sbi = o['sbi'] || '';
+                        let bemp = o['bemp'] || '';
+                        let popupContent = `
+                            <div>
+                                <strong>${name}</strong><br>
+                                編號: ${o['sno'] || ''}<br>
+                                地點: ${o['sarea'] || ''}<br>
+                                地址: ${o['ar'] || ''}<br>
+                                可借: ${sbi}，空位: ${bemp}
+                            </div>`;
+
+                        let marker = L.marker([lat, lng]).bindPopup(popupContent);
+
+                        // 點擊 marker 時，同步顯示詳細資訊到側欄 / 資訊面板
+                        marker.on('click', function (e) {
+                            showStationInfo(o);
+                            // popup 會自動開啟，若要強制開啟可使用 this.openPopup();
+                        });
+
+                        arrLayers.push(marker);
+                    }
+
+                }
+
+                layerGroup = L.layerGroup(arrLayers);
+                layerGroup.addTo(map);
+            });
+        });
+        // 已移除：原先呼叫的 updateYoubike 未定義，會造成錯誤
+        // 如果需要週期更新，可實作一個 updateYoubike() 函式並在此啟動
+    </script>
+</body>
+
+</html>
