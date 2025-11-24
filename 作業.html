@@ -108,8 +108,8 @@
                 function showStationInfo(o) {
                     let lat = o['lat'] || o['latitude'] || '';
                     let lng = o['lng'] || o['longitude'] || '';
-                    let sbi = o['sbi'] || o['available'] || '';
-                    let bemp = o['bemp'] || o['empty_slots'] || '';
+                    let sbi = o['available_rent_bikes'] || o['sbi'] || '';
+                    let bemp = o['available_return_bikes'] || o['bemp'] || '';
 
                     let html = `
                         <strong>${o['sna'] || o['name'] || '站名不詳'}</strong><br>
@@ -142,8 +142,8 @@
                     // 只有在有座標時才建立 marker
                     if (lat && lng) {
                         // 建立含站點詳細資訊的 popup 內容
-                        let sbi = o['sbi'] || '';
-                        let bemp = o['bemp'] || '';
+                        let sbi = o['available_rent_bikes'] || o['sbi'] || '';
+                        let bemp = o['available_return_bikes'] || o['bemp'] || '';
                         let popupContent = `
                             <div>
                                 <strong>${name}</strong><br>
