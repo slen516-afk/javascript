@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+        integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+    <style>
+        #map {
+            height: 640px
+        }
+    </style> -->
+
+
+    <!-- leaflet css 設定 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <!-- 自訂 css -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        .header {
+            padding: 10px 20px;
+            background: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .left-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #map {
+            flex: 1;
+            min-height: 300px;
+        }
+
+        .table-wrapper {
+            flex: 0 0 200px;
+            overflow-y: auto;
+            border-top: 1px solid #ddd;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        table thead {
+            position: sticky;
+            top: 0;
+            background: #f0f0f0;
+        }
+
+        table thead th,
+        table tbody td {
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        table tbody tr:hover {
+            background: #f9f9f9;
+            cursor: pointer;
+        }
+
+        /* 右側詳細資訊面板 */
+        .right-panel {
+            width: 0;
+            background: white;
+            border-left: 1px solid #ddd;
+            overflow-y: auto;
+            transition: width 0.3s ease;
+            z-index: 100;
+        }
+
+        .right-panel.active {
+            width: 350px;
+        }
+
+        #info {
+            padding: 20px;
+            position: relative;
+        }
+
+        #info strong {
+            color: #333;
+            font-size: 18px;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        #info p {
+            margin: 8px 0;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <button id="btn_request">取得台北市YouBike列表</button>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="left-panel">
+            <div id="map"></div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>location</th>
+                            <th>region</th>
+                            <th>address</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 右側詳細資訊面板 -->
+        <div class="right-panel" id="right-panel">
+            <button class="close-btn" onclick="closePanel()">✕</button>
+            <div id="info">
+                <p>點選地圖上的站點或表格列以顯示詳細資訊</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+        integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+    <script>
+        // 初始化地圖
+        const map = L.map('map').setView([25.0339145, 121.5412233], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        let layerGroup = null;
+        const API_URL = 'https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json';
+        let stationsData = []; // 存儲所有站點資料
+
+        // 提取站點資訊，統一欄位名稱
+        function extractStationInfo(data) {
+            return {
+                id: data['sno'] || '',
+                name: data['sna'] || data['name'] || '站名',
+                lat: data['lat'] || data['latitude'],
+                lng: data['lng'] || data['longitude'],
+                area: data['sarea'] || '',
+                address: data['ar'] || '',
+                rentBikes: data['available_rent_bikes'] || data['sbi'] || 0,
+                emptySpots: data['available_return_bikes'] || data['bemp'] || 0
+            };
+        }
+
+        // 顯示詳細資訊面板
+        function showStationInfo(station) {
+            const html = `
+                <strong>${station.name}</strong>
+                <p><strong>編號:</strong> ${station.id}</p>
+                <p><strong>區域:</strong> ${station.area}</p>
+                <p><strong>地址:</strong> ${station.address}</p>
+                <p><strong>可借車輛:</strong> ${station.rentBikes}</p>
+                <p><strong>可停空位:</strong> ${station.emptySpots}</p>
+                <p><strong>座標:</strong> ${station.lat}, ${station.lng}</p>
+            `;
+            document.getElementById('info').innerHTML = html;
+            document.getElementById('right-panel').classList.add('active');
+        }
+
+        // 關閉右側面板
+        function closePanel() {
+            document.getElementById('right-panel').classList.remove('active');
+        }
+
+        // 新增地圖標記
+        function addMarker(station, layers) {
+            if (!station.lat || !station.lng) return;
+
+            const popupContent = `
+                <div>
+                    <strong>${station.name}</strong><br>
+                    編號: ${station.id}<br>
+                    地點: ${station.area}<br>
+                    地址: ${station.address}<br>
+                    可借: ${station.rentBikes}，空位: ${station.emptySpots}
+                </div>`;
+
+            const marker = L.marker([station.lat, station.lng]).bindPopup(popupContent);
+            marker.on('click', () => showStationInfo(station));
+            layers.push(marker);
+        }
+
+        // 載入 YouBike 資料
+        function loadYoubikes() {
+            // 清空舊資料
+            if (layerGroup) {
+                map.removeLayer(layerGroup);
+                layerGroup = null;
+            }
+
+            document.querySelector('table>tbody').innerHTML = '';
+            const tbody = document.querySelector('table>tbody');
+            const layers = [];
+
+            fetch(API_URL)
+                .then(response => response.json())
+                .then(arr => {
+                    // 使用 DocumentFragment 提升效能
+                    const fragment = document.createDocumentFragment();
+                    stationsData = []; // 清空並重新填充資料
+
+                    arr.forEach(data => {
+                        const station = extractStationInfo(data);
+                        stationsData.push(station);
+
+                        // 建立表格列
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td>${station.id}</td>
+                                       <td>${station.name}</td>
+                                       <td>${station.area}</td>
+                                       <td>${station.address}</td>`;
+
+                        // 點擊表格列顯示詳細資訊
+                        tr.addEventListener('click', () => showStationInfo(station));
+                        fragment.appendChild(tr);
+
+                        // 新增地圖標記
+                        addMarker(station, layers);
+                    });
+
+                    tbody.appendChild(fragment);
+                    layerGroup = L.layerGroup(layers).addTo(map);
+                })
+                .catch(error => {
+                    console.error('載入資料失敗:', error);
+                    document.getElementById('info').innerHTML = '<p style="color: red;">⚠️ 無法載入資料，請檢查網路連線。</p>';
+                });
+        }
+
+        // 綁定按鈕事件
+        document.querySelector('button#btn_request').addEventListener('click', loadYoubikes);
+    </script>
+</body>
+
+</html>
